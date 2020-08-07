@@ -3,12 +3,13 @@
     <string name="app_name">Phone ID</string>
 
     <string name="phone_id"><![CDATA[
-    <p><b>Phone IDs</b></p><br/>
-    <p><b>phoneNumber:</b> %s</p><br/>
-    <p><b>bluetoothName:</b> %s</p><br/>
-    <p><b>deviceName:</b> %s</p><br/>
+    <h1>Phone IDs</h1><br/>
+    <p><b>Phone IMEI:</b> %s</p><br/>
+    <p><b>Phone Number:</b> %s</p><br/>
+    <p><b>Device Name:</b> %s</p><br/>
+    <p><b>Bluetooth Name:</b> %s</p><br/>
     <p><b>ICCID:</b> %s</p><br/>
-    <p><b>other subscription info:</b> %s</p>
+    <p><b>Other Subscription Info:</b> %s</p>
 ]]></string>
 
 </resources>

@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        val imei = getImei()
         val phoneNumber = getPhoneNumber()
         val bluetoothName = getBluetoothName()
         val deviceName = getDeviceName()
@@ -40,13 +41,34 @@ class MainActivity : AppCompatActivity() {
         phoneId.text = Html.fromHtml(
             getString(
                 R.string.phone_id,
+                imei,
                 phoneNumber,
-                bluetoothName,
                 deviceName,
+                bluetoothName,
                 subscriptionInfo?.iccId,
                 subscriptionInfo
             ), Html.FROM_HTML_MODE_COMPACT
         )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getImei(): String? {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return null
+        }
+
+        val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+
+        //---get the phone IMEI---
+        return try {
+            telephonyManager.imei
+        } catch (e: Exception) {
+            null
+        }
     }
 
     @SuppressLint("HardwareIds")
@@ -70,8 +92,15 @@ class MainActivity : AppCompatActivity() {
     private fun getDeviceName() =
         Settings.Secure.getString(contentResolver, Settings.Global.DEVICE_NAME)
 
-    @SuppressLint("MissingPermission")
     private fun getSubscriptionInfo(): SubscriptionInfo? {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return null
+        }
+
         val subscriptionManager =
             getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
         val subscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
