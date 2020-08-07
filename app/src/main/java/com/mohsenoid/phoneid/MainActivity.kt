@@ -6,7 +6,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.telephony.SubscriptionInfo
+import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
+import android.text.Html
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -32,11 +35,18 @@ class MainActivity : AppCompatActivity() {
         val phoneNumber = getPhoneNumber()
         val bluetoothName = getBluetoothName()
         val deviceName = getDeviceName()
+        val subscriptionInfo = getSubscriptionInfo()
 
-        phoneId.text = "Device IDs\n" +
-                "phoneNumber: $phoneNumber\n" +
-                "bluetoothName: $bluetoothName\n" +
-                "deviceName: $deviceName"
+        phoneId.text = Html.fromHtml(
+            getString(
+                R.string.phone_id,
+                phoneNumber,
+                bluetoothName,
+                deviceName,
+                subscriptionInfo?.iccId,
+                subscriptionInfo
+            ), Html.FROM_HTML_MODE_COMPACT
+        )
     }
 
     @SuppressLint("HardwareIds")
@@ -57,5 +67,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun getBluetoothName() = Settings.Secure.getString(contentResolver, "bluetooth_name")
 
-    private fun getDeviceName() = Settings.Secure.getString(contentResolver, Settings.Global.DEVICE_NAME)
+    private fun getDeviceName() =
+        Settings.Secure.getString(contentResolver, Settings.Global.DEVICE_NAME)
+
+    @SuppressLint("MissingPermission")
+    private fun getSubscriptionInfo(): SubscriptionInfo? {
+        val subscriptionManager =
+            getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+        val subscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
+        return if (subscriptionInfoList.isNotEmpty()) subscriptionInfoList[0] else null
+    }
 }
