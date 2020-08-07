@@ -101,9 +101,12 @@ class MainActivity : AppCompatActivity() {
             return null
         }
 
-        val subscriptionManager =
+        val subscriptionManager: SubscriptionManager =
             getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
-        val subscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
+
+        val subscriptionInfoList: MutableList<SubscriptionInfo> =
+            subscriptionManager.activeSubscriptionInfoList ?: return null
+
         return if (subscriptionInfoList.isNotEmpty()) subscriptionInfoList[0] else null
     }
 }
